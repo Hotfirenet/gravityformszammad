@@ -9,7 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 Plugin Name: Gravity Forms Zammad Add-On
 Plugin URI: https://www.gravityforms.com
 Description: Integrates Gravity Forms with Zammad.
-Version: 1.0
+Version: 1.1
 Author: Johan VIVIEN
 Author URI: https://hotfirenet.com
 License: GPL-3.0
@@ -35,7 +35,7 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  **/
 
-define( 'GF_ZAMMAD_VERSION', '1.0' );
+define( 'GF_ZAMMAD_VERSION', '1.1' );
 
 // If Gravity Forms is loaded, bootstrap the Zammad Add-On.
 add_action( 'gform_loaded', array( 'GF_Zammad_Bootstrap', 'load' ), 5 );

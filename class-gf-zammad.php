@@ -244,14 +244,14 @@ class GFZammad extends GFFeedAddOn {
 					array(
 						'name'              => 'zammadURL',
 						'label'             => esc_html__( 'Zammad URL', 'gravityformszammad' ),
-						'type'              => 'zammad_url',
+						'type'              => 'text',
 						'class'             => 'medium',
 						'feedback_callback' => array( $this, 'is_valid_plugin_key' ),
 					),
 					array(
 						'name'              => 'zammadToken',
 						'label'             => esc_html__( 'Zammad Token', 'gravityformszammad' ),
-						'type'              => 'zammad_token',
+						'type'              => 'text',
 						'class'             => 'medium',
 						'feedback_callback' => array( $this, 'is_valid_plugin_key' ),
 					),
@@ -413,6 +413,22 @@ class GFZammad extends GFFeedAddOn {
 			'content'  => array(
 				'title'  => esc_html__( 'Ticket Content', 'gravityformszammad' ),
 				'fields' => array(
+					array(
+						'name'          => 'ticket_firstname_customer',
+						'label'         => esc_html__( 'Customer firstname', 'gravityformszammad' ),
+						'type'          => 'text',
+						'required'      => true,
+						'class'         => 'medium merge-tag-support mt-position-right mt-hide_all_fields',
+						'default_value' => $this->get_default_field_merge_tag( 'firstname' ),
+					),
+					array(
+						'name'          => 'ticket_lastname_customer',
+						'label'         => esc_html__( 'Customer lastname', 'gravityformszammad' ),
+						'type'          => 'text',
+						'required'      => true,
+						'class'         => 'medium merge-tag-support mt-position-right mt-hide_all_fields',
+						'default_value' => $this->get_default_field_merge_tag( 'lastname' ),
+					),
 					array(
 						'name'          => 'ticket_email_customer',
 						'label'         => esc_html__( 'Customer email', 'gravityformszammad' ),
@@ -650,33 +666,45 @@ class GFZammad extends GFFeedAddOn {
 			return;
 		}
 
-		//Todo
 		$customer_id = '';
+
+		$customer_data = array(
+			'firstname' => GFCommon::replace_variables( rgars( $feed, 'meta/firstname' ), $form, $entry ),
+			'lastname'  => GFCommon::replace_variables( rgars( $feed, 'meta/lastname' ), $form, $entry ),
+			'email'     => $email,
+			'roles'     => array('Customer')
+		);
+
+		$this->log_debug( __METHOD__ . '(): customer data: ' . print_r( $customer_data, true )  );
+
+		$customer = $this->api()->create_user( $customer_data );
+
+		$this->log_debug( __METHOD__ . '(): customer data return: ' . print_r( $customer, true )  );
+
+		if( ! is_wp_error( $customer ) ) {
+
+			$customer_id = $customer['id'];
+		}
 
 		$data = array(
 			'title'       => GFCommon::replace_variables( rgars( $feed, 'meta/ticket_title' ), $form, $entry ),
 			'group_id'    => $feed['meta']['group_id'],
 			'state_id'    => $feed['meta']['state_id'],
 			'priority_id' => $feed['meta']['priority_id'],
-			'customer_id' => $customer_id,
+			'customer'	  => $email,
 			'article'  => array(
 				'from'         => $email,
-				'to'           => $feed['meta']['article_to'],
-				'subject'      => GFCommon::replace_variables( rgars( $feed, 'meta/article_subject' ), $form, $entry ),
+				'to'           => $email,
+				'subject'	   => GFCommon::replace_variables( rgars( $feed, 'meta/ticket_title' ), $form, $entry ),
 				'body'         => GFCommon::replace_variables( rgars( $feed, 'meta/article_content' ), $form, $entry ),
-				'content_type' => 'text/html',
 				'type'         => 'web',
+				'content_type' => 'text/html',
 				'internal'     => 'false',
+				'sender'	   => 'Customer'
 			),
 			'tags'     => $this->merge_tags( $feed, $entry, $form ),
 			'note'     => GFCommon::replace_variables( rgars( $feed, 'meta/ticket_note' ), $form, $entry ),
 		);
-
-		if ( empty( $data['customer_id'] ) ) {
-			$data['customer_id']     = 'guess:'.$email;
-			$data['article']['from'] = $email;
-			$data['article']['to']   = $email;
-		}
 
 		$this->log_debug( __METHOD__ . '(): data: ' . print_r( $data, true )  );
 
