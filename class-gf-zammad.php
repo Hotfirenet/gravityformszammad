@@ -669,8 +669,8 @@ class GFZammad extends GFFeedAddOn {
 		$customer_id = '';
 
 		$customer_data = array(
-			'firstname' => GFCommon::replace_variables( rgars( $feed, 'meta/firstname' ), $form, $entry ),
-			'lastname'  => GFCommon::replace_variables( rgars( $feed, 'meta/lastname' ), $form, $entry ),
+			'firstname' => GFCommon::replace_variables( rgars( $feed, 'meta/ticket_firstname_customer' ), $form, $entry ),
+			'lastname'  => GFCommon::replace_variables( rgars( $feed, 'meta/ticket_lastname_customer' ), $form, $entry ),
 			'email'     => $email,
 			'roles'     => array('Customer')
 		);
@@ -695,7 +695,7 @@ class GFZammad extends GFFeedAddOn {
 			'article'  => array(
 				'from'         => $email,
 				'to'           => $email,
-				'subject'	   => GFCommon::replace_variables( rgars( $feed, 'meta/ticket_title' ), $form, $entry ),
+				'subject'	   => GFCommon::replace_variables( rgars( $feed, 'meta/article_subject' ), $form, $entry ),
 				'body'         => GFCommon::replace_variables( rgars( $feed, 'meta/article_content' ), $form, $entry ),
 				'type'         => 'web',
 				'content_type' => 'text/html',

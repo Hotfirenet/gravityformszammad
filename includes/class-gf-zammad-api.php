@@ -90,11 +90,11 @@ class GF_Zammad_API {
 
 		//Todo 
 		//X-On-Behalf-Of on header 
-		$request_args['headers']["X-On-Behalf-Of"] = $options['article']['email'];
+		//$request_args['headers']["X-On-Behalf-Of"] = $options['article']['email'];
 
 		$request_args['headers']['Authorization'] = 'Bearer ' . $this->zammad_token;
 
-		$this->log_debug( __METHOD__ . '(): headders: ' . print_r( $request_args, true )  );
+		gf_zammad()>log_debug( __METHOD__ . '(): headders: ' . print_r( $request_args, true )  );
 
 		// Execute API request.
 		$response = wp_remote_request( $request_url, $request_args );
